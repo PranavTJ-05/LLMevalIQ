@@ -1,0 +1,4 @@
+rag breakage demo
+traces: 40
+alerts: 45
+pass rates: {'ResponseDriftMetric': 1.0, 'SemanticSimilarityMetric': 0.65, 'OutputStabilityMetric': 0.0}

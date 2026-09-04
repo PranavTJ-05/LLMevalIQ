@@ -1,0 +1,4 @@
+prompt injection demo
+traces: 40
+alerts: 56
+pass rates: {'ResponseDriftMetric': 1.0, 'SemanticSimilarityMetric': 0.5, 'OutputStabilityMetric': 0.0}
