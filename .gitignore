@@ -1,0 +1,17 @@
+.claude
+claude.md
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+.pytest_cache/
+.ruff_cache/
+benchmarks/results/
+benchmarks/results_accuracy/run.log
+.deepeval/
+.env
+
+# generated at runtime by the demos / tests
+*.db
+

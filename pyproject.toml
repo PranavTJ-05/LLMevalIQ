@@ -1,0 +1,88 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llmevaliq"
+version = "0.4.0"
+description = "Deterministic LLM evaluation and production monitoring without LLM-as-judge"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [{ name = "Himanshu", email = "im.furyfist@gmail.com" }]
+keywords = ["llm", "evaluation", "testing", "observability", "deterministic"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.11.0",
+    "sentence-transformers>=3.0.0",
+    "rich>=13.0.0",
+    "matplotlib>=3.8.0",
+    "ruptures>=1.1.9",
+]
+
+[project.optional-dependencies]
+langfuse = ["langfuse>=4.0.0"]
+groq = ["groq>=1.0.0"]
+otel = [
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.20.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.20.0",
+    "opentelemetry-semantic-conventions>=0.48b0",
+    "grpcio>=1.60.0",
+]
+dashboard = [
+    "streamlit>=1.30.0",
+    "plotly>=5.18.0",
+]
+benchmark = [
+    "deepeval>=1.0.0",
+    "ragas>=0.4.0,<1.0.0",
+    # ragas.llms.base imports langchain_community.chat_models.vertexai, removed in 0.4
+    "langchain-community<0.4",
+    "datasets>=2.14.0",
+    "openai>=1.0.0",
+    "groq>=1.0.0",
+]
+all = ["llmevaliq[otel,dashboard,langfuse,groq,benchmark]"]
+dev = [
+    "pytest>=8.0",
+    "pytest-xdist>=3.5",
+    # pinned: keep in sync with .github/workflows/ci.yml so CI and local agree
+    "ruff==0.15.16",
+]
+
+[project.scripts]
+llmevaliq = "llmevaliq.cli.runner:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llmevaliq"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = [".venv", "venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+# Line length is enforced by `ruff format`, not the linter — E501 only produced
+# noise on lines the formatter deliberately leaves long (URLs, long strings).
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+# `benchmarks/` is a repo-local package, not installed into site-packages by the
+# wheel (which ships only src/llmevaliq). Running `python -m pytest` happens to put
+# the CWD on sys.path, but the bare `pytest` console script does not — so the
+# benchmark tests fail to import under CI without this.
+pythonpath = ["."]
